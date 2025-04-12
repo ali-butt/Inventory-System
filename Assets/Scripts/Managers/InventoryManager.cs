@@ -59,10 +59,16 @@ public class InventoryManager : MonoBehaviour
         var animal = inventory.animals.Find(a => a.id == animalId);
         if (animal != null && !animal.isOwned)
         {
-            animal.isOwned = true;
-            SaveInventory();
+            int cost = 20; // Set cost (can be per animal later)
+
+            if (StarManager.Instance.SpendStars(cost))
+            {
+                animal.isOwned = true;
+                SaveInventory();
+            }
         }
     }
+
 
     public void RemoveAnimal(string animalId)
     {
