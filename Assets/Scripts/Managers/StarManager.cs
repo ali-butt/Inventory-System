@@ -1,3 +1,4 @@
+
 using UnityEngine;
 using TMPro;
 
@@ -5,7 +6,7 @@ public class StarManager : MonoBehaviour
 {
     public static StarManager Instance;
 
-    [SerializeField] private int currentStars = 10000;
+    [SerializeField] private int currentStars = 100;
     [SerializeField] private TextMeshProUGUI starText;
 
     private const string StarKey = "PlayerStars";
@@ -26,7 +27,7 @@ public class StarManager : MonoBehaviour
 
     public void LoadStars()
     {
-        currentStars = PlayerPrefs.GetInt(StarKey, 10000); // Default 10000 stars
+        currentStars = PlayerPrefs.GetInt(StarKey, 100);
         UpdateUI();
     }
 
@@ -34,6 +35,14 @@ public class StarManager : MonoBehaviour
     {
         PlayerPrefs.SetInt(StarKey, currentStars);
         PlayerPrefs.Save();
+
+        // Also sync to Firebase (optional)
+        var firebaseSync = FindObjectOfType<FirebaseInventorySync>();
+        if (firebaseSync != null)
+        {
+            string inventoryJson = JsonUtility.ToJson(InventoryManager.Instance.inventory);
+            firebaseSync.SaveInventoryToCloud(inventoryJson, currentStars);
+        }
     }
 
     public bool SpendStars(int amount)
@@ -42,7 +51,6 @@ public class StarManager : MonoBehaviour
         {
             currentStars -= amount;
             SaveStars();
-            UpdateUI();
             return true;
         }
         return false;
@@ -52,7 +60,12 @@ public class StarManager : MonoBehaviour
     {
         currentStars += amount;
         SaveStars();
-        UpdateUI();
+    }
+
+    public void SetStars(int amount)
+    {
+        currentStars = amount;
+        SaveStars();
     }
 
     public int GetCurrentStars()
@@ -63,6 +76,6 @@ public class StarManager : MonoBehaviour
     private void UpdateUI()
     {
         if (starText != null)
-            starText.text = $"{currentStars}";
+            starText.text = $"⭐ {currentStars}";
     }
 }

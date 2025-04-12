@@ -1,12 +1,14 @@
+
 using System.Collections.Generic;
 using UnityEngine;
+
+
 
 [System.Serializable]
 public class InventoryData
 {
     public List<AnimalInstance> ownedAnimals = new List<AnimalInstance>();
 }
-
 
 public class InventoryManager : MonoBehaviour
 {
@@ -22,7 +24,7 @@ public class InventoryManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-            LoadInventory();
+            //LoadInventory();
         }
         else
         {
@@ -30,48 +32,74 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    public void LoadInventory()
+    void Start()
     {
-        if (PlayerPrefs.HasKey(InventoryKey))
+        LoadInventory();
+    }
+
+    public async void LoadInventory()
+    {
+        string json = "";
+        int cloudStars = 0;
+
+        var firebaseSync = FindObjectOfType<FirebaseInventorySync>();
+
+        if (firebaseSync != null)
         {
-            string json = PlayerPrefs.GetString(InventoryKey);
+            var result = await firebaseSync.LoadInventoryFromCloud();
+            json = result.json;
+            cloudStars = result.stars;
+        }
+
+        if (!string.IsNullOrEmpty(json))
+        {
             try
             {
                 inventory = JsonUtility.FromJson<InventoryData>(json);
-                if (inventory == null || inventory.ownedAnimals == null)
-                {
-                    Debug.LogWarning("[InventoryManager] JSON was parsed but returned null. Creating new inventory.");
-                    inventory = new InventoryData();
-                }
+                StarManager.Instance.SetStars(cloudStars);
+                Debug.Log("✅ Inventory loaded from Firebase.");
             }
-            catch (System.Exception e)
+            catch
             {
-                Debug.LogError($"[InventoryManager] Failed to parse inventory JSON: {e.Message}");
-                inventory = new InventoryData(); // fallback to empty inventory
+                Debug.LogWarning("❌ Firebase data invalid. Using default inventory.");
+                CreateDefaultInventory();
             }
+        }
+        else if (PlayerPrefs.HasKey(InventoryKey))
+        {
+            json = PlayerPrefs.GetString(InventoryKey);
+            inventory = JsonUtility.FromJson<InventoryData>(json);
+            StarManager.Instance.LoadStars(); // fallback star load
+            Debug.Log("📦 Loaded from PlayerPrefs.");
         }
         else
         {
-            inventory = new InventoryData(); // no save found
+            CreateDefaultInventory();
+            SaveInventory();
+            Debug.Log("📦 No saved data. Default inventory created.");
         }
-
-        SaveInventory(); // Save back to ensure valid structure
     }
-
 
     public void SaveInventory()
     {
-        if (inventory == null)
-        {
-            Debug.LogWarning("[InventoryManager] Inventory is null. Creating default before saving.");
-            inventory = new InventoryData();
-        }
-
         string json = JsonUtility.ToJson(inventory);
         PlayerPrefs.SetString(InventoryKey, json);
         PlayerPrefs.Save();
+
+        var firebaseSync = FindObjectOfType<FirebaseInventorySync>();
+        if (firebaseSync != null)
+        {
+            int stars = StarManager.Instance.GetCurrentStars();
+            firebaseSync.SaveInventoryToCloud(json, stars);
+        }
+
+        Debug.Log("💾 Inventory saved locally + to cloud.");
     }
 
+    private void CreateDefaultInventory()
+    {
+        inventory.ownedAnimals = new List<AnimalInstance>(); // start with empty inventory
+    }
 
     public bool IsOwned(string id)
     {
@@ -95,6 +123,11 @@ public class InventoryManager : MonoBehaviour
             inventory.ownedAnimals.Remove(animal);
             SaveInventory();
         }
+    }
+
+    public List<AnimalInstance> GetOwnedAnimals()
+    {
+        return new List<AnimalInstance>(inventory.ownedAnimals);
     }
 
     public List<string> GetOwnedAnimalIDs()

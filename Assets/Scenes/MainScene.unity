@@ -1512,6 +1512,37 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animalCardPrefab: {fileID: 6256091079216445278, guid: 5bd29110a4cfe2849851b4348b748e60, type: 3}
   contentParent: {fileID: 234440077}
+--- !u!1 &904215720
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 904215721}
+  m_Layer: 0
+  m_Name: ----- Firebase -----
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &904215721
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 904215720}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1081.0206, y: 534.25604, z: -6.6150727}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &931740336
 GameObject:
   m_ObjectHideFlags: 0
@@ -3282,6 +3313,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 963194228}
   - {fileID: 705507995}
+  - {fileID: 904215721}
   - {fileID: 931740338}
   - {fileID: 627052725}
   - {fileID: 1064109645}
