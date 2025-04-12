@@ -6,7 +6,7 @@ public class ShopUI : MonoBehaviour
     public GameObject animalCardPrefab;         // UI prefab for each shop animal
     public Transform contentParent;             // ScrollView Content object
 
-    private void Start()
+    private void OnEnable()
     {
         PopulateShop();
     }

@@ -6,7 +6,7 @@ public class InventoryUI : MonoBehaviour
     public GameObject animalCardPrefab;   // Reusable card prefab
     public Transform contentParent;       // Content panel of ScrollView
 
-    private void Start()
+    private void OnEnable()
     {
         PopulateInventory();
     }

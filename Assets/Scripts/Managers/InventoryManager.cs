@@ -35,21 +35,43 @@ public class InventoryManager : MonoBehaviour
         if (PlayerPrefs.HasKey(InventoryKey))
         {
             string json = PlayerPrefs.GetString(InventoryKey);
-            inventory = JsonUtility.FromJson<InventoryData>(json);
+            try
+            {
+                inventory = JsonUtility.FromJson<InventoryData>(json);
+                if (inventory == null || inventory.ownedAnimals == null)
+                {
+                    Debug.LogWarning("[InventoryManager] JSON was parsed but returned null. Creating new inventory.");
+                    inventory = new InventoryData();
+                }
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"[InventoryManager] Failed to parse inventory JSON: {e.Message}");
+                inventory = new InventoryData(); // fallback to empty inventory
+            }
         }
         else
         {
-            inventory = new InventoryData(); // Empty list by default
-            SaveInventory();
+            inventory = new InventoryData(); // no save found
         }
+
+        SaveInventory(); // Save back to ensure valid structure
     }
+
 
     public void SaveInventory()
     {
+        if (inventory == null)
+        {
+            Debug.LogWarning("[InventoryManager] Inventory is null. Creating default before saving.");
+            inventory = new InventoryData();
+        }
+
         string json = JsonUtility.ToJson(inventory);
         PlayerPrefs.SetString(InventoryKey, json);
         PlayerPrefs.Save();
     }
+
 
     public bool IsOwned(string id)
     {
