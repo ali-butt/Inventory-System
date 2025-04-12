@@ -17,7 +17,7 @@ public class StarManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-            LoadStars();
+            //LoadStars();
         }
         else
         {
@@ -25,16 +25,18 @@ public class StarManager : MonoBehaviour
         }
     }
 
-    public void LoadStars()
-    {
-        currentStars = PlayerPrefs.GetInt(StarKey, 100);
-        UpdateUI();
-    }
+    /*
+        public void LoadStars()
+        {
+            currentStars = PlayerPrefs.GetInt(StarKey, 100);
+            UpdateUI();
+        }
+    */
 
     public void SaveStars()
     {
-        PlayerPrefs.SetInt(StarKey, currentStars);
-        PlayerPrefs.Save();
+        //PlayerPrefs.SetInt(StarKey, currentStars);
+        //PlayerPrefs.Save();
 
         // Also sync to Firebase (optional)
         var firebaseSync = FindObjectOfType<FirebaseInventorySync>();
@@ -43,6 +45,8 @@ public class StarManager : MonoBehaviour
             string inventoryJson = JsonUtility.ToJson(InventoryManager.Instance.inventory);
             firebaseSync.SaveInventoryToCloud(inventoryJson, currentStars);
         }
+
+        UpdateUI();
     }
 
     public bool SpendStars(int amount)
@@ -73,7 +77,7 @@ public class StarManager : MonoBehaviour
         return currentStars;
     }
 
-    private void UpdateUI()
+    public void UpdateUI()
     {
         if (starText != null)
             starText.text = $"⭐ {currentStars}";

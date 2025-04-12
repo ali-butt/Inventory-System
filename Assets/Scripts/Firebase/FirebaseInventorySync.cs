@@ -4,8 +4,7 @@ using Firebase.Auth;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Firebase.Extensions;
-
-
+using System.Collections;
 
 public class FirebaseInventorySync : MonoBehaviour
 {
@@ -14,8 +13,22 @@ public class FirebaseInventorySync : MonoBehaviour
 
     private void Start()
     {
+        // Ensure Firebase is initialized and user is signed in before proceeding
+        StartCoroutine(WaitForUser());
+    }
+
+    // Wait until Firebase is ready
+    private IEnumerator WaitForUser()
+    {
+        while (FirebaseAuth.DefaultInstance.CurrentUser == null)
+        {
+            yield return new WaitForSeconds(1);
+            Debug.Log("⏳ Waiting for Firebase sign-in...");
+        }
+
         user = FirebaseAuth.DefaultInstance.CurrentUser;
         db = FirebaseFirestore.DefaultInstance;
+        Debug.Log("✅ Firebase and user are ready.");
     }
 
     // Upload local inventory to Firestore
@@ -47,15 +60,24 @@ public class FirebaseInventorySync : MonoBehaviour
         DocumentReference docRef = db.Collection("users").Document(user.UserId);
         var snapshot = await docRef.GetSnapshotAsync();
 
+        // Check if the document exists
         if (snapshot.Exists)
         {
+            Debug.Log("Document exists: " + snapshot.Id);
+
+            // Retrieve inventory data and stars
             string json = snapshot.ContainsField("inventory") ? snapshot.GetValue<string>("inventory") : "";
             int stars = snapshot.ContainsField("stars") ? snapshot.GetValue<int>("stars") : 0;
+
+            // Log the fetched data for debugging
+            Debug.Log("Fetched inventory data: " + json);
+            Debug.Log("Fetched stars: " + stars);
+
             return (json, stars);
         }
         else
         {
-            Debug.Log("No cloud save found for this user.");
+            Debug.LogError("❌ No document found for this user.");
             return ("", 0);
         }
     }

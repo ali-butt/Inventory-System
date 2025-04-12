@@ -1000,6 +1000,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d406125b0a73a84e923efd1e2355428, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  InventoryBtn: {fileID: 1248598649}
   inventory:
     ownedAnimals: []
 --- !u!4 &627052725
@@ -1521,6 +1522,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 904215721}
+  - component: {fileID: 904215723}
+  - component: {fileID: 904215722}
   m_Layer: 0
   m_Name: ----- Firebase -----
   m_TagString: Untagged
@@ -1543,6 +1546,30 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &904215722
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 904215720}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3ed03f28022f8b48b3a16e2b28d1ddf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &904215723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 904215720}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a2ac82f1b1f4204c862c14898ffab84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &931740336
 GameObject:
   m_ObjectHideFlags: 0
@@ -2216,7 +2243,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1248598650}
   m_OnClick:
     m_PersistentCalls:

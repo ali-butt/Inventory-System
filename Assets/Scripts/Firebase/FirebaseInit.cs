@@ -1,40 +1,47 @@
 using Firebase;
 using Firebase.Auth;
 using UnityEngine;
+using Firebase.Extensions;
 
 public class FirebaseInit : MonoBehaviour
 {
     public static FirebaseAuth Auth;
     public static FirebaseUser User;
 
+    public static bool IsFirebaseReady = false; // ✅ Add this flag
+
     private void Awake()
     {
-        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
+        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
         {
-            if (task.Result == DependencyStatus.Available)
+            var status = task.Result;
+
+            if (status == DependencyStatus.Available)
             {
+                Debug.Log("✅ Firebase dependencies resolved.");
                 Auth = FirebaseAuth.DefaultInstance;
                 SignInAnonymously();
             }
             else
             {
-                Debug.LogError("Firebase not available: " + task.Result);
+                Debug.LogError("❌ Could not resolve Firebase dependencies: " + status);
             }
         });
     }
 
     private void SignInAnonymously()
     {
-        Auth.SignInAnonymouslyAsync().ContinueWith(task =>
+        Auth.SignInAnonymouslyAsync().ContinueWithOnMainThread(task =>
         {
-            if (task.IsCompleted && !task.IsFaulted)
+            if (task.IsCompletedSuccessfully)
             {
-                User = task.Result.User; // ✅ Fix is here
-                Debug.Log($"Signed in as: {User.UserId}");
+                User = task.Result.User;
+                IsFirebaseReady = true; // ✅ Set true once signed in
+                Debug.Log("✅ Signed in anonymously as: " + User.UserId);
             }
             else
             {
-                Debug.LogError("Anonymous sign-in failed: " + task.Exception);
+                Debug.LogError("❌ Anonymous sign-in failed: " + task.Exception);
             }
         });
     }

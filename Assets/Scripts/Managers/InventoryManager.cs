@@ -1,8 +1,9 @@
-
 using System.Collections.Generic;
 using UnityEngine;
-
-
+using System.Threading.Tasks;
+using Firebase.Auth;
+using System;
+using UnityEngine.UI;
 
 [System.Serializable]
 public class InventoryData
@@ -12,6 +13,7 @@ public class InventoryData
 
 public class InventoryManager : MonoBehaviour
 {
+    [SerializeField] Button InventoryBtn;
     public static InventoryManager Instance;
 
     private const string InventoryKey = "AnimalInventory";
@@ -32,8 +34,16 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    void Start()
+    private async void Start()
     {
+        // Wait until Firebase is ready
+        while (!FirebaseInit.IsFirebaseReady)
+        {
+            Debug.Log("⏳ Waiting for Firebase to be ready...");
+            await Task.Delay(500); // wait 0.5 seconds
+        }
+
+        Debug.Log("✅ Firebase is ready, loading inventory...");
         LoadInventory();
     }
 
@@ -46,31 +56,30 @@ public class InventoryManager : MonoBehaviour
 
         if (firebaseSync != null)
         {
+            Debug.Log("📝 Attempting to load inventory...");
             var result = await firebaseSync.LoadInventoryFromCloud();
             json = result.json;
             cloudStars = result.stars;
+
+            Debug.Log("Inventory JSON: " + json);  // Check if data is returned
         }
 
         if (!string.IsNullOrEmpty(json))
         {
             try
             {
+                Debug.Log("📦 Deserializing inventory data...");
                 inventory = JsonUtility.FromJson<InventoryData>(json);
                 StarManager.Instance.SetStars(cloudStars);
                 Debug.Log("✅ Inventory loaded from Firebase.");
+
+                InventoryBtn.interactable = true;
             }
-            catch
+            catch (Exception ex)
             {
-                Debug.LogWarning("❌ Firebase data invalid. Using default inventory.");
+                Debug.LogWarning("❌ Firebase data invalid: " + ex.Message);
                 CreateDefaultInventory();
             }
-        }
-        else if (PlayerPrefs.HasKey(InventoryKey))
-        {
-            json = PlayerPrefs.GetString(InventoryKey);
-            inventory = JsonUtility.FromJson<InventoryData>(json);
-            StarManager.Instance.LoadStars(); // fallback star load
-            Debug.Log("📦 Loaded from PlayerPrefs.");
         }
         else
         {
@@ -80,20 +89,29 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
+
     public void SaveInventory()
     {
         string json = JsonUtility.ToJson(inventory);
+
+        /*
         PlayerPrefs.SetString(InventoryKey, json);
         PlayerPrefs.Save();
+        */
 
         var firebaseSync = FindObjectOfType<FirebaseInventorySync>();
         if (firebaseSync != null)
         {
             int stars = StarManager.Instance.GetCurrentStars();
             firebaseSync.SaveInventoryToCloud(json, stars);
+
+            Debug.Log("💾 Inventory saved to cloud.");
+        }
+        else
+        {
+            print("saving failed");
         }
 
-        Debug.Log("💾 Inventory saved locally + to cloud.");
     }
 
     private void CreateDefaultInventory()
