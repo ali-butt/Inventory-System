@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2489b95bc78cc640a570428b997d8e0, type: 3}
+  m_Name: ParrotSO
+  m_EditorClassIdentifier: 
+  id: Parrot_001
+  species: Parrot
+  rarity: Common
+  age: 3
+  health: Healthy
+  specialAbility: Mimic speech
+  cost: 200
+  icon: {fileID: 21300000, guid: 1a3c8975d6d874c14b2c74de510d242f, type: 3}

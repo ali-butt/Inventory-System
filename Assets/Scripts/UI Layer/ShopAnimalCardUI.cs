@@ -21,7 +21,7 @@ public class ShopAnimalCardUI : MonoBehaviour
 
         speciesText.text = data.species;
         rarityText.text = $"Rarity: {data.rarity}";
-        costText.text = $"⭐ {data.cost}";
+        costText.text = $"Stars: {data.cost}";
         ageText.text = $"Age: {data.age}";
         healthText.text = $"Health: {data.health}";
         iconImage.sprite = data.icon;
@@ -34,6 +34,7 @@ public class ShopAnimalCardUI : MonoBehaviour
                 InventoryManager.Instance.AddAnimal(data);
                 Destroy(gameObject); // Remove from shop UI
             }
+            //Here we can add logic to display text to the user about low stars balance
         });
     }
 }

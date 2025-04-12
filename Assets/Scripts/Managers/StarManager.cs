@@ -5,7 +5,7 @@ public class StarManager : MonoBehaviour
 {
     public static StarManager Instance;
 
-    [SerializeField] private int currentStars = 100;
+    [SerializeField] private int currentStars = 10000;
     [SerializeField] private TextMeshProUGUI starText;
 
     private const string StarKey = "PlayerStars";
@@ -26,8 +26,7 @@ public class StarManager : MonoBehaviour
 
     public void LoadStars()
     {
-        //PlayerPrefs.SetInt(StarKey, 100000);
-        currentStars = PlayerPrefs.GetInt(StarKey, 100); // Default 100 stars
+        currentStars = PlayerPrefs.GetInt(StarKey, 10000); // Default 10000 stars
         UpdateUI();
     }
 
@@ -64,6 +63,6 @@ public class StarManager : MonoBehaviour
     private void UpdateUI()
     {
         if (starText != null)
-            starText.text = $"⭐ {currentStars}";
+            starText.text = $"{currentStars}";
     }
 }

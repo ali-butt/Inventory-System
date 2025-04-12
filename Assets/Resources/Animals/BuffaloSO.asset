@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2489b95bc78cc640a570428b997d8e0, type: 3}
+  m_Name: BuffaloSO
+  m_EditorClassIdentifier: 
+  id: buffalo_001
+  species: Buffalo
+  rarity: common
+  age: 7
+  health: Healthy
+  specialAbility: High endurance
+  cost: 400
+  icon: {fileID: 21300000, guid: 5cbcd603ff8fb41dc9f526e14c74a975, type: 3}

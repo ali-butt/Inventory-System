@@ -80,7 +80,6 @@ public class InventoryManager : MonoBehaviour
 
     public void AddAnimal(AnimalDataSO data)
     {
-        print(data.species);
         if (!IsOwned(data.id))
         {
             inventory.ownedAnimals.Add(new AnimalInstance(data));
