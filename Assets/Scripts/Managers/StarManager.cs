@@ -26,6 +26,7 @@ public class StarManager : MonoBehaviour
 
     public void LoadStars()
     {
+        //PlayerPrefs.SetInt(StarKey, 100000);
         currentStars = PlayerPrefs.GetInt(StarKey, 100); // Default 100 stars
         UpdateUI();
     }

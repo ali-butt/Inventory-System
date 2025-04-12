@@ -1,13 +1,20 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
+
+[System.Serializable]
+public class InventoryData
+{
+    public List<AnimalInstance> ownedAnimals = new List<AnimalInstance>();
+}
+
 
 public class InventoryManager : MonoBehaviour
 {
     public static InventoryManager Instance;
 
-    public AnimalInventory inventory = new AnimalInventory();
-
     private const string InventoryKey = "AnimalInventory";
+
+    public InventoryData inventory = new InventoryData();
 
     private void Awake()
     {
@@ -28,11 +35,11 @@ public class InventoryManager : MonoBehaviour
         if (PlayerPrefs.HasKey(InventoryKey))
         {
             string json = PlayerPrefs.GetString(InventoryKey);
-            inventory = JsonUtility.FromJson<AnimalInventory>(json);
+            inventory = JsonUtility.FromJson<InventoryData>(json);
         }
         else
         {
-            CreateDefaultInventory();
+            inventory = new InventoryData(); // Empty list by default
             SaveInventory();
         }
     }
@@ -44,39 +51,33 @@ public class InventoryManager : MonoBehaviour
         PlayerPrefs.Save();
     }
 
-    private void CreateDefaultInventory()
+    public bool IsOwned(string id)
     {
-        inventory.animals = new List<Animal>
-        {
-            new Animal { id = "cat_001", species = "Cat", rarity = "Common", age = 1, health = 100, specialAbility = "Sneaky", isOwned = false },
-            new Animal { id = "dog_001", species = "Dog", rarity = "Rare", age = 2, health = 120, specialAbility = "Loyal", isOwned = false },
-            new Animal { id = "fox_001", species = "Fox", rarity = "Epic", age = 3, health = 140, specialAbility = "Fast", isOwned = false },
-        };
+        return inventory.ownedAnimals.Exists(a => a.id == id);
     }
 
-    public void BuyAnimal(string animalId)
+    public void AddAnimal(AnimalDataSO data)
     {
-        var animal = inventory.animals.Find(a => a.id == animalId);
-        if (animal != null && !animal.isOwned)
+        print(data.species);
+        if (!IsOwned(data.id))
         {
-            int cost = 20; // Set cost (can be per animal later)
-
-            if (StarManager.Instance.SpendStars(cost))
-            {
-                animal.isOwned = true;
-                SaveInventory();
-            }
-        }
-    }
-
-
-    public void RemoveAnimal(string animalId)
-    {
-        var animal = inventory.animals.Find(a => a.id == animalId);
-        if (animal != null && animal.isOwned)
-        {
-            animal.isOwned = false;
+            inventory.ownedAnimals.Add(new AnimalInstance(data));
             SaveInventory();
         }
+    }
+
+    public void RemoveAnimal(string id)
+    {
+        var animal = inventory.ownedAnimals.Find(a => a.id == id);
+        if (animal != null)
+        {
+            inventory.ownedAnimals.Remove(animal);
+            SaveInventory();
+        }
+    }
+
+    public List<string> GetOwnedAnimalIDs()
+    {
+        return inventory.ownedAnimals.ConvertAll(a => a.id);
     }
 }
